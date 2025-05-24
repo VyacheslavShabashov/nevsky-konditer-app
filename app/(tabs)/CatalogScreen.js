@@ -17,12 +17,11 @@ export default function CatalogScreen() {
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => router.push(`/product/${item.id}`)}>
             <View style={styles.card}>
-              <Image source={item.image} style={styles.thumbnail} />
+              <Image source={typeof item.image === 'string' ? { uri: item.image } : item.image} style={styles.thumbnail} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.productName}>{item.name}</Text>
-                <Text style={styles.price}>{item.price} ₽</Text>
                 <Text style={styles.desc}>{item.desc}</Text>
-                <Text>Калории: {item.kcal ?? '-'} | Б: {item.protein ?? '-'} | Ж: {item.fat ?? '-'} | У: {item.carbs ?? '-'}</Text>
+                <Text>Калории: {item.kcal} | Б: {item.protein} | Ж: {item.fat} | У: {item.carbs}</Text>
                 <TouchableOpacity
                   style={styles.button}
                   onPress={() => {
@@ -68,7 +67,6 @@ const styles = StyleSheet.create({
   },
   thumbnail: { width: 70, height: 70, borderRadius: 10, marginRight: 14, backgroundColor: '#eee' },
   productName: { fontWeight: 'bold', fontSize: 16 },
-  price: { fontSize: 15, color: '#44c759', fontWeight: 'bold', marginBottom: 2 },
   desc: { fontSize: 14, color: '#666', marginBottom: 8 },
   button: { marginTop: 8, backgroundColor: '#e46e7c', borderRadius: 8, padding: 8, alignItems: 'center', width: 180, alignSelf: 'center' },
   buttonText: { color: '#fff', fontWeight: 'bold', textAlign: 'center' },
