@@ -1,21 +1,16 @@
 import React from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-
-const products = [
-  { id: '1', name: 'Злаковый батончик', desc: 'Без сахара', kcal: 102, protein: 2.7, fat: 3.5, carbs: 15.6 },
-  { id: '2', name: 'Вафли', desc: 'С пониженным содержанием углеводов', kcal: 120, protein: 8.5, fat: 9.2, carbs: 4.5 },
-  { id: '3', name: 'Печенье овсяное', desc: 'На фруктозе', kcal: 97, protein: 1.4, fat: 4.1, carbs: 13.2 },
-];
+import { products } from '@/constants/products';
 
 export default function CatalogScreen() {
-    const router = useRouter();
+  const router = useRouter();
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Каталог продукции</Text>
       <FlatList
-        data={products}
+        data={products}  // Передаем все 30 товаров
         keyExtractor={item => item.id}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => router.push(`/product/${item.id}`)}>
@@ -39,6 +34,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 20, fontWeight: 'bold', marginBottom: 12 },
   card: { backgroundColor: '#f2f2f2', borderRadius: 10, padding: 12, marginBottom: 10 },
   productName: { fontWeight: 'bold', fontSize: 16 },
+  desc: { fontSize: 14, color: '#666', marginBottom: 8 },
   button: { marginTop: 8, backgroundColor: '#e46e7c', borderRadius: 8, padding: 8, alignItems: 'center' },
   buttonText: { color: '#fff', fontWeight: 'bold' },
 });
