@@ -1,8 +1,9 @@
 import React from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
+import { products } from '@/constants/products';
 
-const products = [
+/* const products = [
   { id: '1', name: 'Злаковый батончик', desc: 'Без сахара', kcal: 102, protein: 2.7, fat: 3.5, carbs: 15.6, image: 'https://via.placeholder.com/200' },
   { id: '2', name: 'Вафли', desc: 'С пониженным содержанием углеводов', kcal: 120, protein: 8.5, fat: 9.2, carbs: 4.5, image: 'https://via.placeholder.com/200' },
   { id: '3', name: 'Печенье овсяное', desc: 'На фруктозе', kcal: 97, protein: 1.4, fat: 4.1, carbs: 13.2, image: 'https://via.placeholder.com/200' },
@@ -33,7 +34,7 @@ const products = [
   { id: '28', name: 'Банановые батончики', desc: 'С добавлением бананов', kcal: 130, protein: 3.5, fat: 6.0, carbs: 17.5, image: 'https://via.placeholder.com/200' },
   { id: '29', name: 'Печенье с ягодами', desc: 'С черникой и малиной', kcal: 110, protein: 2.0, fat: 5.5, carbs: 19.0, image: 'https://via.placeholder.com/200' },
   { id: '30', name: 'Печенье с медом', desc: 'С натуральным медом', kcal: 120, protein: 3.0, fat: 6.0, carbs: 18.0, image: 'https://via.placeholder.com/200' }
-];
+]; */
 
 
 

@@ -1,42 +1,6 @@
 import { useLocalSearchParams } from 'expo-router';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-
-// Массив продуктов с картинками
-const products = [
-  {
-    id: '1',
-    name: 'Злаковый батончик',
-    desc: 'Без сахара',
-    description: 'Полезный злаковый батончик идеально подходит для правильного питания. Без добавления сахара и лишних калорий.',
-    kcal: 102,
-    protein: 2.7,
-    fat: 3.5,
-    carbs: 15.6,
-    image: 'https://via.placeholder.com/200'
-  },
-  {
-    id: '2',
-    name: 'Вафли',
-    desc: 'С пониженным содержанием углеводов',
-    description: 'Пониженное содержание углеводов и сахара. Вафли, которые можно есть в любое время.',
-    kcal: 120,
-    protein: 8.5,
-    fat: 9.2,
-    carbs: 4.5,
-    image: 'https://via.placeholder.com/200'
-  },
-  {
-    id: '3',
-    name: 'Печенье овсяное',
-    desc: 'На фруктозе',
-    description: 'Печенье с фруктозой, идеальное для сладкоежек, следящих за фигурой.',
-    kcal: 97,
-    protein: 1.4,
-    fat: 4.1,
-    carbs: 13.2,
-    image: 'https://via.placeholder.com/200'
-  },
-];
+import { products } from '@/constants/products';
 
 export default function ProductScreen() {
   const { id } = useLocalSearchParams();
