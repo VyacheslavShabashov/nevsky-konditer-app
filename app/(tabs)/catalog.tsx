@@ -1,12 +1,7 @@
 import React from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-
-const products = [
-  { id: '1', name: 'Злаковый батончик', desc: 'Без сахара', kcal: 102, protein: 2.7, fat: 3.5, carbs: 15.6 },
-  { id: '2', name: 'Вафли', desc: 'С пониженным содержанием углеводов', kcal: 120, protein: 8.5, fat: 9.2, carbs: 4.5 },
-  { id: '3', name: 'Печенье овсяное', desc: 'На фруктозе', kcal: 97, protein: 1.4, fat: 4.1, carbs: 13.2 },
-];
+import { products } from '@/constants/products';
 
 export default function CatalogScreen() {
     const router = useRouter();
