@@ -1,62 +1,176 @@
+
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { useCart } from '../contexts/CartContext'; // путь к CartContext
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  ScrollView,
+} from 'react-native';
+import { useCart } from '../contexts/CartContext';
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Picker } from '@react-native-picker/picker';
 
 export default function CheckoutScreen() {
   const { cart, clearCart } = useCart();
   const router = useRouter();
+
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
+  const [deliveryType, setDeliveryType] = useState('delivery');
+  const [paymentMethod, setPaymentMethod] = useState('cash');
 
-  function handleOrder() {
-    if (!name || !phone || !address) {
-      Alert.alert('Ошибка', 'Пожалуйста, заполните все поля!');
-      return;
-    }
-    // Тут может быть отправка на сервер или email
-    clearCart();
-    Alert.alert('Спасибо!', 'Ваш заказ принят. Мы свяжемся с вами для уточнения деталей.');
-    router.push('/'); // Вернуться на главную
+  const totalSum = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+
+  async function saveOrderToHistory(order) {
+    const existing = await AsyncStorage.getItem('order-history');
+    const history = existing ? JSON.parse(existing) : [];
+    history.unshift(order);
+    await AsyncStorage.setItem('order-history', JSON.stringify(history));
   }
 
-  if (!cart.length) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.empty}>Корзина пуста. Добавьте товары!</Text>
-      </View>
+  async function handleOrder() {
+    if (!name || !phone || (deliveryType === 'delivery' && !address)) {
+      Alert.alert('Ошибка', 'Пожалуйста, заполните все поля.');
+      return;
+    }
+
+    const method = deliveryType === 'pickup' ? 'Самовывоз' : `Доставка по адресу: ${address}`;
+    const paymentText = paymentMethod === 'cash' ? 'Оплата при получении' : 'Онлайн-оплата';
+
+    const order = {
+      date: new Date().toLocaleString(),
+      name,
+      phone,
+      method,
+      payment: paymentText,
+      total: totalSum,
+      items: cart.map(item => item.name + ' x' + item.qty),
+    };
+
+    await saveOrderToHistory(order);
+
+    if (paymentMethod === 'online') {
+      router.push('/PaymentWebView');
+      return;
+    }
+
+    Alert.alert(
+      'Спасибо за заказ!',
+      `Способ: ${method}\nСумма: ${totalSum} ₽\nОплата: ${paymentText}`,
+      [{ text: 'Ок', onPress: () => {
+        clearCart();
+        router.push('/');
+      } }]
     );
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Оформление заказа</Text>
-      <Text style={styles.label}>Ваше имя</Text>
-      <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="Имя" />
-      <Text style={styles.label}>Телефон</Text>
-      <TextInput style={styles.input} value={phone} onChangeText={setPhone} placeholder="+7..." keyboardType="phone-pad" />
-      <Text style={styles.label}>Адрес</Text>
-      <TextInput style={styles.input} value={address} onChangeText={setAddress} placeholder="Адрес доставки" />
+
+      <TextInput
+        placeholder="Ваше имя"
+        value={name}
+        onChangeText={setName}
+        style={styles.input}
+      />
+      <TextInput
+        placeholder="Телефон"
+        value={phone}
+        onChangeText={setPhone}
+        keyboardType="phone-pad"
+        style={styles.input}
+      />
+
+      <Text style={styles.label}>Способ получения:</Text>
+      <Picker
+        selectedValue={deliveryType}
+        onValueChange={setDeliveryType}
+        style={styles.picker}
+      >
+        <Picker.Item label="Доставка" value="delivery" />
+        <Picker.Item label="Самовывоз" value="pickup" />
+      </Picker>
+
+      {deliveryType === 'delivery' && (
+        <TextInput
+          placeholder="Адрес доставки"
+          value={address}
+          onChangeText={setAddress}
+          multiline
+          style={[styles.input, { height: 80 }]}
+        />
+      )}
+
+      <Text style={styles.label}>Способ оплаты:</Text>
+      <Picker
+        selectedValue={paymentMethod}
+        onValueChange={setPaymentMethod}
+        style={styles.picker}
+      >
+        <Picker.Item label="Оплата при получении" value="cash" />
+        <Picker.Item label="Онлайн-оплата" value="online" />
+      </Picker>
+
+      <Text style={styles.total}>Сумма к оплате: {totalSum} ₽</Text>
+
       <TouchableOpacity style={styles.button} onPress={handleOrder}>
         <Text style={styles.buttonText}>Подтвердить заказ</Text>
       </TouchableOpacity>
-      <View style={{ marginTop: 24 }}>
-        <Text style={{ fontWeight: 'bold' }}>Ваш заказ:</Text>
-        {cart.map(item => (
-          <Text key={item.id}>{item.name} x{item.qty}</Text>
-        ))}
-      </View>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 22, backgroundColor: '#fff' },
-  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 16 },
-  label: { marginTop: 16, marginBottom: 4, fontSize: 15 },
-  input: { backgroundColor: '#f2f2f2', borderRadius: 8, padding: 12, fontSize: 16 },
-  button: { backgroundColor: '#44c759', borderRadius: 8, padding: 14, alignItems: 'center', marginTop: 24 },
-  buttonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
-  empty: { fontSize: 18, color: '#999', textAlign: 'center', marginTop: 40 },
+  container: {
+    padding: 16,
+    backgroundColor: '#fff',
+    flexGrow: 1,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 12,
+    marginBottom: 4,
+  },
+  input: {
+    backgroundColor: '#f2f2f2',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginBottom: 14,
+    fontSize: 16,
+  },
+  picker: {
+    backgroundColor: '#f2f2f2',
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  total: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: '#44c759',
+  },
+  button: {
+    backgroundColor: '#e46e7c',
+    padding: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
 });
