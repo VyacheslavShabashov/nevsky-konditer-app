@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { useRouter } from 'expo-router';
+import { banners } from '../../constants/banners';
 
 
 export default function HomeScreen({ navigation }) {
@@ -10,10 +11,11 @@ export default function HomeScreen({ navigation }) {
       {/* Header */}
       <Text style={styles.logo}>Невский Кондитер.ЗОЖ</Text>
 
-      {/* Banner */}
-      <View style={styles.banner}>
-        <Text style={styles.bannerText}>Открой для себя здоровую линейку!</Text>
-      </View>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 16 }}>
+        {banners.map((b, i) => (
+          <Image key={i} source={b} style={styles.bannerImg} />
+        ))}
+      </ScrollView>
 
       {/* News & Tips */}
       <Text style={styles.sectionTitle}>Новости и советы</Text>
@@ -42,8 +44,7 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16, backgroundColor: '#fff' },
   logo: { fontSize: 22, fontWeight: 'bold', marginVertical: 10, textAlign: 'center' },
-  banner: { backgroundColor: '#f8e1e7', padding: 24, borderRadius: 18, marginBottom: 24, alignItems: 'center' },
-  bannerText: { fontSize: 18, fontWeight: 'bold', textAlign: 'center' },
+  bannerImg: { width: 300, height: 120, borderRadius: 12, marginRight: 12 },
   sectionTitle: { fontSize: 18, fontWeight: 'bold', marginTop: 18, marginBottom: 6 },
   newsCard: { backgroundColor: '#f2f2f2', padding: 12, borderRadius: 10, marginBottom: 8 },
   newsTitle: { fontSize: 16 },

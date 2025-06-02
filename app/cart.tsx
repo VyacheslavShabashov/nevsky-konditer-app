@@ -8,6 +8,7 @@ export default function CartScreen() {
   const router = useRouter();
 
   const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+  const totalSum = cart.reduce((sum, item) => sum + item.qty * item.price, 0);
 
   return (
     <View style={styles.container}>
@@ -38,6 +39,7 @@ export default function CartScreen() {
             )}
           />
           <Text style={styles.total}>Всего товаров: {totalQty}</Text>
+          <Text style={styles.total}>Сумма заказа: {totalSum} ₽</Text>
           <TouchableOpacity style={styles.button} onPress={clearCart}>
             <Text style={styles.buttonText}>Очистить корзину</Text>
           </TouchableOpacity>
